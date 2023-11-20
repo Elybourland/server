@@ -2,7 +2,7 @@ const express = require('express');
 const app = express();
 
 app.get('/', (req, res) => {
-  res.send({ hi: 'there'});
+  res.send({ bye: 'buddy'});
 });
 
 const PORT = process.env.PORT || 5000;
@@ -10,6 +10,9 @@ const PORT = process.env.PORT || 5000;
 app.listen(PORT);
 
 // localhost:5000
+// Using render.com:
+// Reference: https://www.udemy.com/course/node-with-react-fullstack-web-development/learn/lecture/39244222#overview
+// https://express-server-9v0a.onrender.com
 
 // Setting up deployment:
 
