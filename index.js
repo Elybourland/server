@@ -1,42 +1,15 @@
 const express = require('express');
-// For oauth, npm install --save passport passport-google-oauth20
-// Require 'passport' and 'passport-google-oauth20
-const passport = require('passport');
-const GoogleStrategy = require('passport-google-oauth20').Strategy;
+const mongoose = require('mongoose');
 const keys = require('./config/keys');
+// Need to declare models first before using passport
+require('./models/User');
+require('./services/passport');
+
+mongoose.connect(keys.mongoURI);
 
 const app = express();
 
-// GoogleStrategy is identified as 'google' - see get request below:
-passport.use(
-  new GoogleStrategy(
-    {
-      clientID: keys.googleClientID,
-      clientSecret: keys.googleClientSecret,
-      callbackURL: '/auth/google/callback'
-    },
-    (accessToken, refreshToken, profile, done) => {
-      console.log('access token', accessToken);
-      console.log('refresh token', refreshToken);
-      console.log('profile', profile);
-    }
-  )
-);
-
-app.get(
-  '/auth/google', 
-  passport.authenticate('google', {
-    scope: ['profile', 'email']
-  })
-);
-
-app.get('/auth/google/callback', passport.authenticate('google'));
-
-app.get('/', (req, res) => {
-  res.send({
-    hi: 'there'
-  })
-});
+require('./routes/authRoutes')(app);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT);
