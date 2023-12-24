@@ -7,6 +7,20 @@ const keys = require('../config/keys');
 
 const User = mongoose.model('users');
 
+// Grabs user from record and pulls out an id as an identifier
+passport.serializeUser((user, done) => {
+  done(null, user.id);
+});
+
+// Takes user.id identifier, and puts it back as user
+passport.deserializeUser((id, done) => {
+  User.findById(id)
+    .then(user => {
+      done(null, user);
+    })
+});
+
+// TODO: Try adding FacebookStrategy
 // GoogleStrategy is identified as 'google' - see get request below:
 passport.use(
   new GoogleStrategy(
@@ -20,11 +34,14 @@ passport.use(
         .then((existingUser) => {
           if (existingUser) {
             // we already have a record with the given profile id
+            done(null, existingUser);
           } else {
             // we don't have a user record with this is, make a new record
-            new User({ googleId: profile.id }).save();
+            new User({ googleId: profile.id })
+              .save()
+              .then(user => done(null, user));
           }
-        })
+        });
     }
   )
 );
