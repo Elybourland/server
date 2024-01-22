@@ -3,6 +3,9 @@ const mongoose = require('mongoose');
 // TODO: Try using express-session instead of cookie-session
 const cookieSession = require('cookie-session');
 const passport = require('passport');
+
+// npm install --save body-parser, and require it
+const bodyParser = require('body-parser');
 const keys = require('./config/keys');
 // Need to declare models first before using passport
 require('./models/User');
@@ -12,6 +15,7 @@ mongoose.connect(keys.mongoURI);
 
 const app = express();
 
+app.use(bodyParser.json());
 // Make use of cookies with passport and cookie-session
 app.use(
   cookieSession({
@@ -24,6 +28,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 require('./routes/authRoutes')(app);
+require('./routes/billingRoutes')(app);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT);
